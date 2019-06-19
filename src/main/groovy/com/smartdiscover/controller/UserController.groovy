@@ -2,13 +2,9 @@ package com.smartdiscover.controller
 
 import com.smartdiscover.domain.User
 import com.smartdiscover.repository.UserRepository
-import io.micronaut.http.annotation.Body
-import io.micronaut.http.annotation.Controller
-import io.micronaut.http.annotation.Delete
-import io.micronaut.http.annotation.Get
-import io.micronaut.http.annotation.Post
-import io.micronaut.http.annotation.Put
+import io.micronaut.http.annotation.*
 import io.reactivex.Single
+
 import javax.validation.Valid
 
 @Controller("/user")
@@ -21,33 +17,40 @@ class UserController {
     }
 
     @Get("/")
-    Single<String> index(String name) {
+    Single<String> index() {
         return Single.just("Hello World!")
     }
 
-    @Post("/")
-    Single<User> save(@Body @Valid cmd) {
-        println cmd
-        User user = userRepository.save(cmd.firstName, cmd.lastName, cmd.age)
+    @Get("/{id}")
+    def read(Long id) {
+        def user = userRepository.findById(id)
         return Single.just(user)
     }
 
-
-    @Get
-    def read(){
-
+    @Post("/")
+    Single<User> save(@Body @Valid User userParams) {
+        println userParams
+        User savedUser = userRepository.save(userParams.firstName, userParams.lastName, userParams.age)
+        return Single.just(savedUser)
     }
 
-    @Put
-    def update(){
-
+    @Put("/")
+    def update(@Body @Valid User userParams) {
+        def updatedRows = userRepository.update(userParams)
+        read(userParams.id)
     }
 
-    @Delete
-    def delete(){
-
+    @Delete("/{id}")
+    def delete(Long id) {
+        userRepository.deleteById(id)
+        readAll()
     }
 
+    @Get("/readAll")
+    def readAll() {
+        def users = userRepository.findAll()
+        return users
+    }
 
 
 }

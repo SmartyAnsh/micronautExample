@@ -1,9 +1,9 @@
-package com.smartdiscover
+package com.smartdiscover.app
 
 import io.micronaut.runtime.Micronaut
 
 class Application {
-    static void main(String[] args) {
+    static void main(String... args) {
         Micronaut.run(getClass())
     }
 }

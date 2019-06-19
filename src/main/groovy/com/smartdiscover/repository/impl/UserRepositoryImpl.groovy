@@ -8,6 +8,8 @@ import io.micronaut.spring.tx.annotation.Transactional
 import javax.inject.Singleton
 import javax.persistence.EntityManager
 import javax.persistence.PersistenceContext
+import javax.persistence.TypedQuery
+import javax.validation.Valid
 import javax.validation.constraints.NotBlank
 import javax.validation.constraints.NotNull
 
@@ -35,33 +37,28 @@ class UserRepositoryImpl implements UserRepository {
         return user
     }
 
-    /*@Override
+    @Override
+    @Transactional
+    int update(@Valid User user) {
+        return entityManager.createQuery("UPDATE User u SET u.firstName = :firstName, u.lastName = :lastName, u.age = :age where u.id = :id")
+                .setParameter("firstName", user.firstName)
+                .setParameter("lastName", user.lastName)
+                .setParameter("age", user.age)
+                .setParameter("id", user.id)
+                .executeUpdate()
+    }
+
+    @Override
     @Transactional
     void deleteById(@NotNull Long id) {
         findById(id).ifPresent { user -> entityManager.remove(user) }
     }
 
-    final static List<String> VALID_PROPERTY_NAMES = Arrays.asList("id", "name")
-
     @Transactional(readOnly = true)
-    List<User> findAll(@NotNull SortingAndOrderArguments args) {
-        String qlString = 'SELECT u FROM user as u'
-        if (args.getOrder().isPresent() && args.getSort().isPresent() && VALID_PROPERTY_NAMES.contains(args.getSort().get())) {
-            qlString += " ORDER BY g." + args.getSort().get() + " " + args.getOrder().get().toLowerCase()
-        }
+    List<User> findAll() {
+        String qlString = "SELECT u FROM User u"
         TypedQuery<User> query = entityManager.createQuery(qlString, User.class)
-        query.setMaxResults(args.getMax().orElseGet(applicationConfiguration:: getMax))
-        args.getOffset().ifPresent(query:: setFirstResult)
-
         return query.getResultList()
     }
 
-    @Override
-    @Transactional
-    int update(@NotNull Long id, @NotBlank String name) {
-        return entityManager.createQuery("UPDATE User g SET name = :name where id = :id")
-                .setParameter("name", name)
-                .setParameter("id", id)
-                .executeUpdate()
-    }*/
 }
