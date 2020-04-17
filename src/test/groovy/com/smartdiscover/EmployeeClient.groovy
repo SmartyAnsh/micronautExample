@@ -1,6 +1,6 @@
 package com.smartdiscover
 
-import com.smartdiscover.domain.User
+import com.smartdiscover.domain.Employee
 import io.micronaut.http.annotation.Body
 import io.micronaut.http.annotation.Get
 import io.micronaut.http.annotation.Post
@@ -11,8 +11,8 @@ import io.reactivex.Single
 
 import javax.validation.Valid
 
-@Client('/user')
-interface UserClient {
+@Client('/employee')
+interface EmployeeClient {
 
     @Get("/")
     String index()
@@ -21,10 +21,10 @@ interface UserClient {
     String read(Long id)
 
     @Post("/")
-    def save(@Body @Valid User userParams)
+    def save(@Body @Valid Employee userParams)
 
     @Put("/")
-    String update(@Body @Valid User userParams)
+    String update(@Body @Valid Employee userParams)
 
     @Delete("/{id}")
     String delete(Long id)

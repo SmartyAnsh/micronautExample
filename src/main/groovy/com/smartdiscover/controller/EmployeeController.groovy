@@ -1,24 +1,19 @@
 package com.smartdiscover.controller
 
-import com.smartdiscover.domain.User
-import com.smartdiscover.repository.UserRepository
+import com.smartdiscover.domain.Employee
+import com.smartdiscover.repository.EmployeeRepository
 import io.micronaut.http.annotation.*
 import io.reactivex.Single
 
 import javax.validation.Valid
 
-@Controller("/user")
-class UserController {
+@Controller("/employee")
+class EmployeeController {
 
-    protected final UserRepository userRepository
+    protected final EmployeeRepository userRepository
 
-    UserController(UserRepository userRepository) {
+    EmployeeController(EmployeeRepository userRepository) {
         this.userRepository = userRepository
-    }
-
-    @Get("/")
-    Single<String> index() {
-        return Single.just("Hello World!")
     }
 
     @Get("/{id}")
@@ -28,14 +23,14 @@ class UserController {
     }
 
     @Post("/")
-    Single<User> save(@Body @Valid User userParams) {
+    Single<Employee> save(@Body @Valid Employee userParams) {
         println userParams
-        User savedUser = userRepository.save(userParams.firstName, userParams.lastName, userParams.age)
-        return Single.just(savedUser)
+        Employee savedEmployee = userRepository.save(userParams)
+        return Single.just(savedEmployee)
     }
 
     @Put("/")
-    def update(@Body @Valid User userParams) {
+    def update(@Body @Valid Employee userParams) {
         def updatedRows = userRepository.update(userParams)
         read(userParams.id)
     }
@@ -46,7 +41,7 @@ class UserController {
         readAll()
     }
 
-    @Get("/readAll")
+    @Get("/")
     def readAll() {
         def users = userRepository.findAll()
         return users
